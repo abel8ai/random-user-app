@@ -29,6 +29,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding = true
+    }
     kotlinOptions {
         jvmTarget = '1.8'
     }
@@ -69,8 +72,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    // pdf viewer
-    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
     // viewmodels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1'
     // livedata
@@ -85,8 +86,7 @@ dependencies {
     // dagger hilt
     implementation 'com.google.dagger:hilt-android:2.38.1'
     kapt 'com.google.dagger:hilt-android-compiler:2.38.1'
-    // excel work
-    implementation "org.apache.poi:poi:3.17"
-    // expandable textview
-    implementation 'io.github.glailton.expandabletextview:expandabletextview:1.0.1'
+    // retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 }
