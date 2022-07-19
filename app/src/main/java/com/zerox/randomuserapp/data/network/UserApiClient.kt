@@ -6,6 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Url
 
 interface UserApiClient {
-    @GET("/.json")
+    @GET
     suspend fun getAllUsers(@Url url: String):Response<UserResponse>
 }
