@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.zerox.randomuserapp.R
 import com.zerox.randomuserapp.data.model.entities.user.User
 import com.zerox.randomuserapp.databinding.ActivityMainBinding
 import com.zerox.randomuserapp.ui.view.adapters.UserAdapter
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar!!.title = resources.getString(R.string.main_activity_title)
         userViewModel
         loadData()
         userViewModel.usersModel.observe(this, Observer {
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadData() {
         binding.pbLoadingUsers.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
-            userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture")
+            userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture,location")
         }
     }
 
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         page++
         binding.pbLoadingUsers.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
-            userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture")
+            userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture,location")
         }
     }
 

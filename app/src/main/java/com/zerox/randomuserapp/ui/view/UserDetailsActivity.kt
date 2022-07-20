@@ -57,6 +57,7 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         binding = ActivityUserDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        supportActionBar!!.title = resources.getString(R.string.details_activity_title)
         userEmail = intent.extras!!.getString("user_email").toString()
         userPage = intent.extras!!.getInt("user_page")
         userViewModel
