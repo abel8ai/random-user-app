@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         userViewModel
         loadData()
-        userViewModel.userModel.observe(this, Observer {
+        userViewModel.usersModel.observe(this, Observer {
             userList = it
             initRecyclerView()
         })
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         binding.rvUsers.visibility = View.VISIBLE
         val manager = LinearLayoutManager(this)
         binding.rvUsers.layoutManager = manager
-        adapter = UserAdapter(userList)
+        adapter = UserAdapter(userList,page)
         binding.rvUsers.adapter = adapter
         binding.rvUsers.addOnScrolledToEnd {
             loadMoreData()
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         page++
         binding.pbLoadingUsers.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
-            userViewModel.getAllUsers("?results=50&seed=abc&page=$page")
+            userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture")
         }
     }
 
