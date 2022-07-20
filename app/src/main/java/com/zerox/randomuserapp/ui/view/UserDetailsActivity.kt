@@ -58,6 +58,7 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityUserDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar!!.title = resources.getString(R.string.details_activity_title)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         userEmail = intent.extras!!.getString("user_email").toString()
         userPage = intent.extras!!.getInt("user_page")
         userViewModel
@@ -90,7 +91,7 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.cvUser.visibility = View.VISIBLE
         binding.tvUserName.text = user.name.title+". "+user.name.first+" "+user.name.last
         binding.tvUserMail.text = user.email
-        Picasso.get().load(user.picture.medium).into(binding.ivUserImage)
+        Picasso.get().load(user.picture.large).into(binding.ivUserImage)
     }
 
     private fun loadData() {
@@ -98,6 +99,10 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         CoroutineScope(Dispatchers.IO).launch {
             userViewModel.getUserByEmail("?results=50&seed=abc&page=$userPage&inc=name,email,picture,location",userEmail)
         }
+    }
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 
     // methods for google maps
