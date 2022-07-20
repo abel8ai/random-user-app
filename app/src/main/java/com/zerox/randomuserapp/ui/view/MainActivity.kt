@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadData() {
         binding.pbLoadingUsers.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
-            userViewModel.getAllUsers("?results=50&seed=abc&page=$page")
+            userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture")
         }
     }
 
