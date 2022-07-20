@@ -15,7 +15,7 @@ class UserViewModel @Inject constructor(
 
     val userModel = MutableLiveData<MutableList<User>>()
 
-    suspend fun getAllUsers(){
-        userModel.postValue(userService.getUsers("?result=50")!!.results)
+    suspend fun getAllUsers(url:String){
+        userModel.postValue(userService.getUsers(url).results)
     }
 }
