@@ -12,7 +12,7 @@ class UserViewHolder(view:View):RecyclerView.ViewHolder(view){
 
     private val binding = UserItemBinding.bind(view)
     fun bind(user: User){
-        binding.tvUserName.text = user.name.first
+        binding.tvUserName.text = user.name.title + ". " +user.name.first + " " +user.name.last
         binding.tvUserMail.text = user.email
         Picasso.get().load(user.picture.thumbnail).into(binding.ivUserImage)
         binding.cvElement.setOnClickListener{
