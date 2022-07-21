@@ -63,7 +63,7 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         userViewModel
         loadData()
         userViewModel.userModel.observe(this, Observer {
-            user = it
+            user = it!!
             showDetails()
             setUserLocation()
         })
