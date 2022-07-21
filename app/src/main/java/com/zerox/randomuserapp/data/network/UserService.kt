@@ -9,10 +9,10 @@ import javax.inject.Inject
 
 class UserService @Inject constructor(private val retrofit: Retrofit) {
 
-    suspend fun getUsers(url:String):UserResponse{
+    suspend fun getUsers(url:String):UserResponse?{
         return withContext(Dispatchers.IO){
             val response = retrofit.create(UserApiClient::class.java).getAllUsers(url)
-            response.body()?:throw IllegalStateException("Ha ocurrido un error")
+            response.body()
         }
     }
 }
