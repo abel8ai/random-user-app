@@ -1,8 +1,10 @@
 package com.zerox.randomuserapp.ui.view
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +14,11 @@ import com.zerox.randomuserapp.data.model.entities.user.User
 import com.zerox.randomuserapp.databinding.ActivityMainBinding
 import com.zerox.randomuserapp.ui.view.adapters.UserAdapter
 import com.zerox.randomuserapp.ui.view_model.UserViewModel
+import com.zerox.randomuserapp.ui.view_model.exceptions.FailedApiResponseException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -22,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: UserAdapter
+    private lateinit var context: Context
     private var page = 1;
     private var userList = mutableListOf<User>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar!!.title = resources.getString(R.string.main_activity_title)
+        context = this
         userViewModel
         loadData()
         userViewModel.usersModel.observe(this, Observer {
@@ -42,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         binding.rvUsers.visibility = View.VISIBLE
         val manager = LinearLayoutManager(this)
         binding.rvUsers.layoutManager = manager
-        adapter = UserAdapter(userList,page)
+        adapter = UserAdapter(userList, page)
         binding.rvUsers.adapter = adapter
         binding.rvUsers.addOnScrolledToEnd {
             loadMoreData()
@@ -52,7 +58,16 @@ class MainActivity : AppCompatActivity() {
     private fun loadData() {
         binding.pbLoadingUsers.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
-            userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture,location")
+            try {
+                userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture")
+            } catch (exception: Exception) {
+
+                runOnUiThread {
+                    binding.pbLoadingUsers.visibility = View.GONE
+                    Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
         }
     }
 
@@ -60,7 +75,14 @@ class MainActivity : AppCompatActivity() {
         page++
         binding.pbLoadingUsers.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
-            userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture,location")
+            try {
+                userViewModel.getAllUsers("?results=50&seed=abc&page=$page&inc=name,email,picture")
+            } catch (exception: Exception) {
+                runOnUiThread {
+                    Toast.makeText(context, exception.message, Toast.LENGTH_SHORT).show()
+                }
+
+            }
         }
     }
 

@@ -1,8 +1,10 @@
 package com.zerox.randomuserapp.ui.view
 
+import android.content.Context
 import android.location.Location
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -22,6 +24,7 @@ import com.zerox.randomuserapp.R
 import com.zerox.randomuserapp.data.model.entities.user.User
 import com.zerox.randomuserapp.databinding.ActivityUserDetailsBinding
 import com.zerox.randomuserapp.ui.view_model.UserViewModel
+import com.zerox.randomuserapp.ui.view_model.exceptions.FailedApiResponseException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,9 +32,10 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
-    private lateinit var binding : ActivityUserDetailsBinding
-    private val userViewModel : UserViewModel by viewModels()
+    private lateinit var binding: ActivityUserDetailsBinding
+    private val userViewModel: UserViewModel by viewModels()
     private lateinit var userEmail: String
+    private lateinit var context: Context
     private var userPage = 0
     private lateinit var user: User
 
@@ -55,6 +59,7 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         userEmail = intent.extras!!.getString("user_email").toString()
         userPage = intent.extras!!.getInt("user_page")
+        context = this
         userViewModel
         loadData()
         userViewModel.userModel.observe(this, Observer {
@@ -83,7 +88,7 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun showDetails() {
         binding.pbLoadingUser.visibility = View.GONE
         binding.cvUser.visibility = View.VISIBLE
-        binding.tvUserName.text = user.name.title+". "+user.name.first+" "+user.name.last
+        binding.tvUserName.text = user.name.title + ". " + user.name.first + " " + user.name.last
         binding.tvUserEmail.text = user.email
         Picasso.get().load(user.picture.large).into(binding.ivUserImage)
     }
@@ -91,9 +96,23 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun loadData() {
         binding.pbLoadingUser.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
-            userViewModel.getUserByEmail("?results=50&seed=abc&page=$userPage&inc=name,email,picture,location",userEmail)
+            try {
+                userViewModel.getUserByEmail(
+                    "?results=50&seed=abc&page=$userPage&inc=name,email,picture,location",
+                    userEmail
+                )
+            } catch (exception: Exception) {
+                runOnUiThread {
+                    Toast.makeText(context,exception.message,Toast.LENGTH_SHORT).show()
+                    Picasso.get().load(R.drawable.user_not_found).into(binding.ivUserImage)
+                    binding.pbLoadingUser.visibility = View.GONE
+                    binding.cvUser.visibility = View.VISIBLE
+                    binding.tvUserName.text = resources.getString(R.string.user_not_found)
+                }
+            }
         }
     }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
@@ -107,19 +126,26 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
         super.onSaveInstanceState(outState)
     }
-    private fun setUserLocation(){
+
+    private fun setUserLocation() {
         map?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
-                LatLng(user.location.coordinates.latitude,
-                    user.location.coordinates.longitude), DEFAULT_ZOOM.toFloat()))
+                LatLng(
+                    user.location.coordinates.latitude,
+                    user.location.coordinates.longitude
+                ), DEFAULT_ZOOM.toFloat()
+            )
+        )
     }
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
     }
+
     companion object {
         private val TAG = UserDetailsActivity::class.java.simpleName
         private const val DEFAULT_ZOOM = 15
+
         // Keys for storing activity state.
         private const val KEY_CAMERA_POSITION = "camera_position"
         private const val KEY_LOCATION = "location"
