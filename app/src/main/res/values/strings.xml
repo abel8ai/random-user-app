@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Random User App</string>
+    <string name="main_activity_title">Listado de Usuarios</string>
+    <string name="details_activity_title">Detalles de Usuario</string>
+    <string name="user_not_found">Usuario no encontrado</string>
+    <string name="network_error">Ha ocurrido un error. Verifique su conexión e inténtelo de nuevo</string>
+
 </resources>
