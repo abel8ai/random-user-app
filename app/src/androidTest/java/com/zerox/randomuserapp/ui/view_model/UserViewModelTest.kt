@@ -102,4 +102,18 @@ internal class UserViewModelTest{
             runBlocking { userViewModel.getUserByEmail(url,"qwe") }
         }
     }
+    @Test
+    fun shouldThrowFailedApiResponseExceptionOnNullResponse2(): Unit = runBlocking {
+        // given
+        coEvery { userService.getUsers(url) }returns null
+        // when
+        userViewModel.getUserByEmail(url,email)
+        // then
+        coVerify(exactly = 1) { userService.getUsers(url) }
+        Assert.assertThrows(FailedApiResponseException::class.java){
+            runBlocking { userViewModel.getUserByEmail(url,email) }
+        }
+
+    }
+
 }
