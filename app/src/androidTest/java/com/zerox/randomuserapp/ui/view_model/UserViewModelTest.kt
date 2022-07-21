@@ -6,7 +6,6 @@ import android.os.Build.VERSION_CODES.Q
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import com.zerox.randomuserapp.data.model.entities.user.User
-import com.zerox.randomuserapp.data.model.entities.user.UserResponse
 import com.zerox.randomuserapp.data.network.UserService
 import com.zerox.randomuserapp.ui.view_model.exceptions.EmailNotFoundException
 import com.zerox.randomuserapp.ui.view_model.exceptions.FailedApiResponseException
@@ -67,7 +66,10 @@ internal class UserViewModelTest{
         userViewModel.getAllUsers(url)
         // then
         coVerify(exactly = 1) { userService.getUsers(url) }
-        Assert.assertThrows(FailedApiResponseException::class.java,userViewModel.getAllUsers(url))
+        Assert.assertThrows(FailedApiResponseException::class.java){
+            runBlocking { userViewModel.getAllUsers(url) }
+        }
+
     }
     @Test
     fun shouldReturnTheUserForTheGivenEmail() = runBlocking {
@@ -96,7 +98,8 @@ internal class UserViewModelTest{
         userViewModel.getUserByEmail(url,"qwe")
         // then
         coVerify(exactly = 1) { userService.getUsers(url) }
-        Assert.assertThrows(EmailNotFoundException::class.java,userViewModel.getUserByEmail(url,"qwe"))
+        Assert.assertThrows(EmailNotFoundException::class.java){
+            runBlocking { userViewModel.getUserByEmail(url,"qwe") }
+        }
     }
-
 }
