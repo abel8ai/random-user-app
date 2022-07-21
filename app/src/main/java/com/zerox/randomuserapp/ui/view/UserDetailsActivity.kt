@@ -81,15 +81,15 @@ class UserDetailsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showDetails() {
-        binding.pbLoadingUsers.visibility = View.GONE
+        binding.pbLoadingUser.visibility = View.GONE
         binding.cvUser.visibility = View.VISIBLE
         binding.tvUserName.text = user.name.title+". "+user.name.first+" "+user.name.last
-        binding.tvUserMail.text = user.email
+        binding.tvUserEmail.text = user.email
         Picasso.get().load(user.picture.large).into(binding.ivUserImage)
     }
 
     private fun loadData() {
-        binding.pbLoadingUsers.visibility = View.VISIBLE
+        binding.pbLoadingUser.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
             userViewModel.getUserByEmail("?results=50&seed=abc&page=$userPage&inc=name,email,picture,location",userEmail)
         }
